@@ -14,7 +14,7 @@
   margin-bottom: 10px;
 }
 
-.textos{
+.textos {
   display: flex;
   flex-direction: column;
   align-items: start;
@@ -42,24 +42,38 @@
   margin: 20px 0;
 }
 
-button {
-  padding: 12px;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: bold;
+button, 
+.login,
+.registrar {
+  padding: 16px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 900;
   cursor: pointer;
+  text-decoration: none;
+  color: white;
+  width: 100%;
+  max-width: 250px;
+  box-sizing: border-box;
+  text-align: center;
+  user-select: none;
 }
 
 .login {
   background-color: #3A5F54;
-  color: white;
   box-shadow: 0 4px 0 #1a2b3c;
+}
+
+.login:hover {
+  background-color: #2d4b42;
 }
 
 .registrar {
   background-color: #508071;
-  color: white;
+}
+
+.registrar:hover {
+  background-color: #3e6658;
 }
 
 .ajuda {

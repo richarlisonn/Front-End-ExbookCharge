@@ -1,28 +1,55 @@
-import icon from "./assets/images/icon.png";
-import './app.css'
+import React from "react";
+import "./app.css";
+import { Link } from "react-router-dom";
+import Icon from "./assets/images/icon.png";
 
-export function App() {
-
-
+function App() {
   return (
-   <div className="container">
+    <div className="container">
       <div className="logo">
-        <img src={icon} alt="Logo Exbook Change" />
-
+        <img src={Icon} alt="Logo Exbook Change" />
+        <h1>
+          Exbook
+          <br />
+          Change
+        </h1>
       </div>
 
       <div className="textos">
-        <h2>BEM-VINDO AO, <br />EXBOOK CHANGE</h2>
-        <p>Desapegue de um livro, abrace um novo mundo.<br />
-           Compartilhe e troque seus livros por todo Brasil!</p>
+        <h2>
+          BEM-VINDO AO,
+          <br />
+          EXBOOK CHANGE
+        </h2>
+        <p>
+          Desapegue de um livro, abrace um novo mundo.
+          <br />
+          Compartilhe e troque seus livros por todo Brasil!
+        </p>
       </div>
 
       <div className="botoes">
-        <button className="login">LOGIN</button>
-        <button className="registrar">REGISTRAR</button>
+        <Link to="/login" className="login">
+          LOGIN
+        </Link>
+        <Link to="/register" className="registrar">
+          REGISTRAR
+        </Link>
       </div>
 
-      <a href="#" className="ajuda">Precisa de Ajuda?</a>
+
+      <a
+        href="#"
+        className="ajuda"
+        onClick={(e) => {
+          e.preventDefault();
+          alert("Ajuda: Entre em contato pelo e-mail");
+        }}
+      >
+        Precisa de Ajuda?
+      </a>
     </div>
-  )
+  );
 }
+
+export default App;
