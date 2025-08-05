@@ -8,11 +8,6 @@ function App() {
     <div className="container">
       <div className="logo">
         <img src={Icon} alt="Logo Exbook Change" />
-        <h1>
-          Exbook
-          <br />
-          Change
-        </h1>
       </div>
 
       <div className="textos">
