@@ -35,7 +35,7 @@ function RegisterPage() {
 
     if (Object.keys(newErrors).length === 0) {
       console.log('Registro enviado com sucesso:', form);
-      // aqui você pode integrar com API
+      
     }
   };
 
@@ -51,12 +51,35 @@ function RegisterPage() {
         {errors.email && <span className="erro">{errors.email}</span>}
 
         <label>DATA NASCIMENTO</label>
-        <input type="text" name="nascimento" placeholder="__/__/____" value={form.nascimento} onChange={handleChange} />
+        <input type="date" name="nascimento" value={form.nascimento} onChange={handleChange} />
         {errors.nascimento && <span className="erro">{errors.nascimento}</span>}
 
         <label>Telefone</label>
-        <input type="text" name="telefone" value={form.telefone} onChange={handleChange} />
+        <input
+          type="tel"
+          name="telefone"
+          value={form.telefone}
+          onChange={(e) => {
+            let value = e.target.value;
+
+            
+            if (!value.startsWith("+55")) {
+              value = "+55" + value.replace(/\D/g, ""); 
+            }
+
+           
+            if (value.length > 14) {
+              value = value.slice(0, 14);
+            }
+
+            handleChange({
+              target: { name: "telefone", value }
+            });
+          }}
+          maxLength={14} 
+        />
         {errors.telefone && <span className="erro">{errors.telefone}</span>}
+
 
         <label>SENHA</label>
         <input type="password" name="senha" value={form.senha} onChange={handleChange} />
