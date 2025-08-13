@@ -6,7 +6,7 @@ import Icon from "./assets/images/icon.png";
 function App() {
   return (
     <div className="container">
-      <div className="logo">
+      <div className="logo_HomePage">
         <img src={Icon} alt="Logo Exbook Change" />
       </div>
 

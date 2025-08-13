@@ -1,0 +1,33 @@
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 15px;
+    background-color: #e6f4f1;
+}
+
+.icon {
+    font-size: 22px;
+    cursor: pointer;
+    color: #0f3d3e;
+    margin: 0 5px;
+}
+
+.logo_DashBoard {
+    display: flex;
+    position: relative;
+    left: 20px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.right-icons {
+    display: flex;
+    align-items: center;
+}
+
+.main {
+    background-color: #e8f5ef;
+    height: 100vh;
+
+}

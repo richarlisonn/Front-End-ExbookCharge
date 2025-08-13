@@ -29,7 +29,7 @@ function LoginPage() {
 
   return (
     <div className="login-container">
-      <img src={Icon} alt="Logo" className="logo" />
+      <img src={Icon} alt="Logo" className="logo_LoginPage" />
 
       <form onSubmit={handleLogin} className="form">
         <h2>LOGIN</h2>

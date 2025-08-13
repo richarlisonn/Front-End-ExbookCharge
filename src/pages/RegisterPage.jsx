@@ -41,7 +41,7 @@ function RegisterPage() {
 
   return (
     <div className="register-container">
-      <img src={Icon} alt="Logo" className="logo" />
+      <img src={Icon} alt="Logo" className="logo_RegisterPage" />
 
       <form className="form" onSubmit={handleSubmit}>
         <h2>REGISTRO</h2>
