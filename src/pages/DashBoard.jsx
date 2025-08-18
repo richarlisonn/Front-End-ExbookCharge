@@ -15,9 +15,9 @@ function DashBoard() {
     
       <header className="header">
         <FaBars className="icon" onClick={toggleMenu} /> 
-        <img src={Logo} alt="Logo Exbook Change" className="logo_DashBoard" />
+       <a href=""> <img src={Logo} alt="Logo Exbook Change" className="logo_DashBoard" /></a>
         <div className="right-icons">
-          <FaUser className="icon" />
+          <a href="Perfil"><FaUser className="icon" /></a>
         </div>
       </header>
 
@@ -33,7 +33,7 @@ function DashBoard() {
           </div>
           <ul className="menu-list">
             <li><a href="/dashboard">Início</a></li>
-            <li><a href="/dashboard">Criar Anúncio</a></li>
+            <li><a href="/CriarAnuncio">Criar Anúncio</a></li>
             <li><a href="/dashboard"><FaSignOutAlt /> Sair</a></li>
           </ul>
         </div>

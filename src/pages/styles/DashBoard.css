@@ -72,6 +72,8 @@
   text-decoration: none;
   color: #0f3d3e;
   font-size: 18px;
+  display: flex;
+  
 }
 
 .menu-list li a:hover {
