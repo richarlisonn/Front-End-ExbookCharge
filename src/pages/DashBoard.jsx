@@ -10,6 +10,13 @@ function DashBoard() {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const annouces = [
+    { title: "Dom Casmurro", autor: "Machado de Assis", link: "/dom-casmurro" },
+    { title: "O Senhor dos Anéis", autor: "J.R.R. Tolkien", link: "/senhor-dos-aneis" },
+    { title: "1984", autor: "George Orwell", link: "/1984" },
+    { title: "1984", autor: "George Orwell", link: "/1984" },
+  ]
+
   return (
     <div className="div_main">
     
@@ -53,34 +60,15 @@ function DashBoard() {
 
     
       <div className="ads-container">
-        <a href="livro" className="ad-card">
+        {annouces.map((livro, index) => (
+        <a key={index} href={livro.link} className="ad-card">
           <div className="ad-image"></div>
           <div className="ad-info">
-            <h3>TITLE</h3>
-            <p>Autor</p>
+            <h3>{livro.title}</h3>
+            <p>{livro.autor}</p>
           </div>
         </a>
-        <a href="livro" className="ad-card">
-          <div className="ad-image"></div>
-          <div className="ad-info">
-            <h3>TITLE</h3>
-            <p>Autor</p>
-          </div>
-        </a>
-        <a href="livro" className="ad-card">
-          <div className="ad-image"></div>
-          <div className="ad-info">
-            <h3>TITLE</h3>
-            <p>Autor</p>
-          </div>
-        </a>
-        <a href="livro" className="ad-card">
-          <div className="ad-image"></div>
-          <div className="ad-info">
-            <h3>TITLE</h3>
-            <p>Autor</p>
-          </div>
-        </a>
+      ))}
       </div>
 
    
