@@ -10,6 +10,7 @@ import DashBoard from './pages/DashBoard.jsx';
 import Anuncio from './pages/Anuncio.jsx'
 import PerfilUsuario from './pages/PerfilUsuario.jsx';  
 import CriarAnuncio from './pages/CriarAnuncio.jsx';
+import EditarPerfil from './pages/EditarPerfil.jsx';
 
 const router = createBrowserRouter([
   { path: '/', element: <App /> },
@@ -19,6 +20,7 @@ const router = createBrowserRouter([
   { path: '/anuncio', element: <Anuncio /> },
   { path: '/perfil', element: <PerfilUsuario /> },
   { path: '/criaranuncio', element: <CriarAnuncio /> },
+  { path: '/editarperfil', element: <EditarPerfil /> },
 
 
 ]);
