@@ -23,7 +23,7 @@ function DashBoard() {
 
   return (
     <div className="div_main">
-      {/* HEADER */}
+     
       <header className="header">
         <FaBars className="icon" onClick={toggleMenu} /> 
         <a href="/dashboard">
@@ -36,10 +36,10 @@ function DashBoard() {
 
       <hr className="divider" />
 
-      {/* OVERLAY ESCURO */}
+      
       {isMenuOpen && <div className="overlay" onClick={closeMenu}></div>}
 
-      {/* MENU LATERAL */}
+     
       <div className={`side-menu ${isMenuOpen ? "open" : ""}`}>
         <div className="menu-header">
           <FaUser className="menu-icon" />
@@ -53,7 +53,7 @@ function DashBoard() {
         </ul>
       </div>
 
-      {/* BARRA DE PESQUISA */}
+      
       <div className="search-container">
         <div className="search-input-container">
           <input
@@ -65,7 +65,7 @@ function DashBoard() {
         </div>
       </div>
 
-      {/* LISTA DE ANÚNCIOS */}
+      
       <div className="ads-container">
         {annouces.map((livro, index) => (
           <a key={index} href={livro.link} className="ad-card">
