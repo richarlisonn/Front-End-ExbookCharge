@@ -6,10 +6,10 @@ import './styles/RegisterPage.css';
 function RegisterPage() {
   const [form, setForm] = useState({
     email: '',
-    nascimento: '',
-    telefone: '',
-    senha: '',
-    confirmarSenha: ''
+    birthdate: '',
+    phone: '',
+    password: '',
+    confirmPassword: ''
   });
 
   const [errors, setErrors] = useState({});
@@ -23,19 +23,24 @@ function RegisterPage() {
 
     const newErrors = {};
     if (!form.email) newErrors.email = 'campo obrigatório*';
-    if (!form.nascimento) newErrors.nascimento = 'campo obrigatório*';
-    if (!form.telefone) newErrors.telefone = 'campo obrigatório*';
-    if (!form.senha) newErrors.senha = 'campo obrigatório*';
-    if (!form.confirmarSenha) newErrors.confirmarSenha = 'campo obrigatório*';
-    if (form.senha && form.confirmarSenha && form.senha !== form.confirmarSenha) {
-      newErrors.confirmarSenha = 'as senhas não coincidem*';
+    if (!form.birthdate) newErrors.birthdate = 'campo obrigatório*';
+    if (!form.phone) newErrors.phone = 'campo obrigatório*';
+    if (!form.password) {
+      newErrors.password = 'campo obrigatório*';
+    } else if (form.password.length < 8) {
+      newErrors.password = 'a senha deve ter no mínimo 8 caracteres*';
+    }
+    if (!form.confirmPassword) {
+      newErrors.confirmPassword = 'campo obrigatório*';
+    } else if (form.password !== form.confirmPassword) {
+      newErrors.confirmPassword = 'as senhas não coincidem*';
     }
 
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
       console.log('Registro enviado com sucesso:', form);
-      
+      // aqui você pode chamar API ou redirecionar
     }
   };
 
@@ -51,43 +56,40 @@ function RegisterPage() {
         {errors.email && <span className="erro">{errors.email}</span>}
 
         <label>DATA NASCIMENTO</label>
-        <input type="date" name="nascimento" value={form.nascimento} onChange={handleChange} />
-        {errors.nascimento && <span className="erro">{errors.nascimento}</span>}
+        <input type="date" name="birthdate" value={form.birthdate} onChange={handleChange} />
+        {errors.birthdate && <span className="erro">{errors.birthdate}</span>}
 
         <label>Telefone</label>
         <input
           type="tel"
-          name="telefone"
-          value={form.telefone}
+          name="phone"
+          value={form.phone}
           onChange={(e) => {
             let value = e.target.value;
 
-            
             if (!value.startsWith("+55")) {
               value = "+55" + value.replace(/\D/g, ""); 
             }
 
-           
             if (value.length > 14) {
               value = value.slice(0, 14);
             }
 
             handleChange({
-              target: { name: "telefone", value }
+              target: { name: "phone", value }
             });
           }}
           maxLength={14} 
         />
-        {errors.telefone && <span className="erro">{errors.telefone}</span>}
-
+        {errors.phone && <span className="erro">{errors.phone}</span>}
 
         <label>SENHA</label>
-        <input type="password" name="senha" value={form.senha} onChange={handleChange} />
-        {errors.senha && <span className="erro">{errors.senha}</span>}
+        <input type="password" name="password" value={form.password} onChange={handleChange} />
+        {errors.password && <span className="erro">{errors.password}</span>}
 
         <label>CONFIRME A SENHA</label>
-        <input type="password" name="confirmarSenha" value={form.confirmarSenha} onChange={handleChange} />
-        {errors.confirmarSenha && <span className="erro">{errors.confirmarSenha}</span>}
+        <input type="password" name="confirmPassword" value={form.confirmPassword} onChange={handleChange} />
+        {errors.confirmPassword && <span className="erro">{errors.confirmPassword}</span>}
 
         <button type="submit" className="btn-criar">CRIAR CONTA</button>
       </form>

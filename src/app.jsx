@@ -1,13 +1,13 @@
 import React from "react";
 import "./app.css";
 import { Link } from "react-router-dom";
-import Icon from "./assets/images/icon.png";
+import Logo from "./componentes/iconapp"; 
 
 function App() {
   return (
     <div className="container">
       <div className="logo_HomePage">
-        <img src={Icon} alt="Logo Exbook Change" />
+        <Logo size={150} /> 
       </div>
 
       <div className="textos">
@@ -31,7 +31,6 @@ function App() {
           REGISTRAR
         </Link>
       </div>
-
 
       <a
         href="#"
