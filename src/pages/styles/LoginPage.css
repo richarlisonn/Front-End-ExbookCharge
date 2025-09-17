@@ -12,11 +12,9 @@
 
 .logo_LoginPage {
     width: 150px;
-    
 }
 
 .form {
-    
     width: 100%;
     max-width: 250px;
     text-align: left;
@@ -46,7 +44,7 @@ input {
     border-radius: 4px;
 }
 
-.senha-container {
+.password-container {
     position: relative;
 }
 
@@ -56,6 +54,13 @@ input {
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
+    font-size: 20px; /* aumenta o tamanho do ícone */
+    color: #666; /* cor padrão */
+    transition: color 0.2s ease-in-out;
+}
+
+.toggle:hover {
+    color: #264653; /* cor ao passar o mouse */
 }
 
 .erro {
@@ -64,7 +69,6 @@ input {
     margin-bottom: 10px;
     display: block;
 }
-
 
 .btn-acessar {
     width: 100%;
@@ -76,6 +80,11 @@ input {
     font-weight: bold;
     margin-top: 20px;
     cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.btn-acessar:hover {
+    background-color: #1d3541;
 }
 
 .link-ajuda {
@@ -84,5 +93,9 @@ input {
     color: #457b9d;
     font-size: 12px;
     text-decoration: none;
+    transition: color 0.2s ease-in-out;
 }
 
+.link-ajuda:hover {
+    color: #264653;
+}

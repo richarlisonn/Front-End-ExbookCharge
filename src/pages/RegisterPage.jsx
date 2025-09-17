@@ -12,10 +12,10 @@ function RegisterPage() {
   const [form, setForm] = useState({
     nome_completo: '',
     email: '',
-    nascimento: '',
-    telefone: '',
-    senha: '',
-    confirmarSenha: ''
+    birthdate: '',
+    phone: '',
+    password: '',
+    confirmPassword: ''
   });
 
   const [errors, setErrors] = useState({});
@@ -150,12 +150,11 @@ function RegisterPage() {
         <label>Telefone</label>
         <input
           type="tel"
-          name="telefone"
-          value={form.telefone}
+          name="phone"
+          value={form.phone}
           onChange={(e) => {
             let value = e.target.value;
 
-            
             if (!value.startsWith("+55")) {
               value = "+55" + value.replace(/\D/g, ""); 
             }
@@ -166,7 +165,7 @@ function RegisterPage() {
             }
             
             handleChange({
-              target: { name: "telefone", value }
+              target: { name: "phone", value }
             });
           }}
           maxLength={14} 

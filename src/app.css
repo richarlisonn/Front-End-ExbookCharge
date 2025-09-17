@@ -9,11 +9,6 @@
   background-color: #EAF6F1;
 }
 
-.logo_HomePage img {
-  width: 150px;
-  margin-bottom: 10px;
-}
-
 .textos {
   display: flex;
   flex-direction: column;
