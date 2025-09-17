@@ -12,10 +12,10 @@ function RegisterPage() {
   const [form, setForm] = useState({
     nome_completo: '',
     email: '',
-    birthdate: '',
-    phone: '',
-    password: '',
-    confirmPassword: ''
+    nascimento: '',
+    telefone: '',
+    senha: '',
+    confirmarSenha: ''
   });
 
   const [errors, setErrors] = useState({});
@@ -31,7 +31,10 @@ function RegisterPage() {
 
     startTransition(async () => {
       const token = axios.get(import.meta.env.VITE_BASE_URL + "authentication/csrf-token/")
-      .then((response) => {console.log(response); console.log(response.data);return response.data})
+      .then((response) => {
+        localStorage.setItem("csrf-token", response.data);
+        return response.data;
+      })
       .catch((error) => {console.log(error); setErrors({server: "Erro em requisitar CSRF token para o servidor", details: error}); return;});
 
       if (!token) {
@@ -150,8 +153,8 @@ function RegisterPage() {
         <label>Telefone</label>
         <input
           type="tel"
-          name="phone"
-          value={form.phone}
+          name="telefone"
+          value={form.telefone}
           onChange={(e) => {
             let value = e.target.value;
 
@@ -165,7 +168,7 @@ function RegisterPage() {
             }
             
             handleChange({
-              target: { name: "phone", value }
+              target: { name: "telefone", value }
             });
           }}
           maxLength={14} 
