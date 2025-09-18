@@ -32,8 +32,8 @@ function RegisterPage() {
     startTransition(async () => {
       const token = axios.get(import.meta.env.VITE_BASE_URL + "authentication/csrf-token/")
       .then((response) => {
-        localStorage.setItem("csrf-token", response.data);
-        return response.data;
+        localStorage.setItem("csrf-token", response.data.data);
+        return response.data.data;
       })
       .catch((error) => {console.log(error); setErrors({server: "Erro em requisitar CSRF token para o servidor", details: error}); return;});
 
