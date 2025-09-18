@@ -1,13 +1,88 @@
 import "./styles/CriarAnuncio.css";
-import React from "react";
+import React, { useState } from "react";
 import Logo from "../assets/images/icon.png";
 import { FaBars, FaUser, FaSignOutAlt, FaImage } from "react-icons/fa";
 
 function CriarAnuncio() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [image, setImage] = useState(null);
+  const [form, setForm] = useState({
+    title: "",
+    autor: "",
+    descricao: "",
+    status: "bom",
+  });
+  const [anuncioCriado, setAnuncioCriado] = useState(null);
+  const [alert, setAlert] = useState({ open: false, message: "" });
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setImage(e.target.files[0]); 
+    }
+  };
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!form.title || !form.autor || !form.descricao || !image) {
+      setAlert({
+        open: true,
+        message: "⚠️ Preencha todos os campos e adicione uma foto!",
+      });
+      return;
+    }
+
+    try {
+      // usamos FormData porque tem upload de imagem
+      const formData = new FormData();
+      formData.append("title", form.title);
+      formData.append("autor", form.autor);
+      formData.append("descricao", form.descricao);
+      formData.append("status", form.status);
+      formData.append("image", image);
+
+      // chamada à API
+      const response = await fetch("http://localhost:3000/anuncios", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro ao criar anúncio");
+      }
+
+      const data = await response.json();
+
+      setAnuncioCriado(data); 
+      setAlert({ open: true, message: "✅ Anúncio criado com sucesso!" });
+
+    
+      setForm({ title: "", autor: "", descricao: "", status: "bom" });
+      setImage(null);
+    } catch (error) {
+      setAlert({
+        open: true,
+        message: "❌ Ocorreu um erro ao criar o anúncio.",
+      });
+    }
+  };
+
+  const closeAlert = () => {
+    setAlert({ open: false, message: "" });
+  };
+
   return (
     <div className="div_main">
       <header className="header">
-        <FaBars className="icon" />
+        <FaBars className="icon" onClick={toggleMenu} />
         <a href="/dashboard">
           <img src={Logo} alt="Logo Exbook Change" className="logo_DashBoard" />
         </a>
@@ -20,7 +95,9 @@ function CriarAnuncio() {
 
       <hr className="divider" />
 
-      <div className="side-menu">
+      {isMenuOpen && <div className="overlay" onClick={toggleMenu}></div>}
+
+      <div className={`side-menu ${isMenuOpen ? "open" : ""}`}>
         <div className="menu-header">
           <FaUser className="menu-icon" />
           <p>Name Profile</p>
@@ -36,31 +113,56 @@ function CriarAnuncio() {
       <div className="create-ad-container">
         <h2 className="title">Criar Anúncio</h2>
 
-        <form className="ad-form">
-          <label>TITLE</label>
-          <input type="text" placeholder="Digite o título" />
+        <form className="ad-form" onSubmit={handleSubmit}>
+          <label>Título</label>
+          <input
+            type="text"
+            name="title"
+            placeholder="Digite o título"
+            value={form.title}
+            onChange={handleChange}
+          />
 
           <label>Autor</label>
-          <input type="text" placeholder="Digite o autor" />
+          <input
+            type="text"
+            name="autor"
+            placeholder="Digite o autor"
+            value={form.autor}
+            onChange={handleChange}
+          />
 
           <div className="image-upload">
-            <div className="upload-placeholder">
-              <FaImage size={60} />
-            </div>
+            <label htmlFor="file-input">
+              {image ? (
+                <img
+                  src={URL.createObjectURL(image)}
+                  alt="preview"
+                  className="preview-img"
+                />
+              ) : (
+                <div className="upload-placeholder">
+                  <FaImage size={60} />
+                </div>
+              )}
+            </label>
+            <input
+              id="file-input"
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              style={{ display: "none" }}
+            />
           </div>
 
           <div className="status-container">
-            <div className="switch-field">
-              <label>Disponível</label>
-              <label className="switch">
-                <input type="checkbox" />
-                <span className="slider round"></span>
-              </label>
-              <span>Troca</span>
-            </div>
             <div className="status-field">
               <label>Status</label>
-              <select>
+              <select
+                name="status"
+                value={form.status}
+                onChange={handleChange}
+              >
                 <option value="bom">Bom</option>
                 <option value="otimo">Ótimo</option>
                 <option value="novo">Novo</option>
@@ -70,13 +172,38 @@ function CriarAnuncio() {
           </div>
 
           <label>Descrição</label>
-          <textarea placeholder="Escreva a descrição"></textarea>
+          <textarea
+            name="descricao"
+            placeholder="Escreva a descrição"
+            value={form.descricao}
+            onChange={handleChange}
+          />
 
           <button type="submit" className="create-btn">
             CRIAR
           </button>
         </form>
       </div>
+
+      {alert.open && (
+        <div className="custom-alert">
+          <div className="custom-alert-box">
+            <p>{alert.message}</p>
+            <button onClick={closeAlert}>OK</button>
+          </div>
+        </div>
+      )}
+
+      {anuncioCriado && (
+        <div className="anuncio-card">
+          <h3>📌 Último Anúncio Criado</h3>
+          <img src={anuncioCriado.imageUrl} alt={anuncioCriado.title} />
+          <h4>{anuncioCriado.title}</h4>
+          <p><b>Autor:</b> {anuncioCriado.autor}</p>
+          <p><b>Status:</b> {anuncioCriado.status}</p>
+          <p><b>Descrição:</b> {anuncioCriado.descricao}</p>
+        </div>
+      )}
     </div>
   );
 }
