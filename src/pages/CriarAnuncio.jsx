@@ -10,7 +10,7 @@ function CriarAnuncio() {
     title: "",
     autor: "",
     descricao: "",
-    status: "bom",
+    status: "danificado",
   });
   const [anuncioCriado, setAnuncioCriado] = useState(null);
   const [alert, setAlert] = useState({ open: false, message: "" });
@@ -41,7 +41,6 @@ function CriarAnuncio() {
     }
 
     try {
-      // usamos FormData porque tem upload de imagem
       const formData = new FormData();
       formData.append("title", form.title);
       formData.append("autor", form.autor);
@@ -163,10 +162,23 @@ function CriarAnuncio() {
                 value={form.status}
                 onChange={handleChange}
               >
-                <option value="bom">Bom</option>
-                <option value="otimo">Ótimo</option>
-                <option value="novo">Novo</option>
-                <option value="lacrado">Lacrado</option>
+                <option value="1">Danificado</option>
+                <option value="2">Usado</option>
+                <option value="3">Bom</option>
+                <option value="4">Ótimo</option>
+                <option value="5">Novo</option>
+              </select>
+            </div>
+
+             <div className="status-field">
+            
+              <select
+                name="status"
+                value={form.status}
+                onChange={handleChange}
+              >
+                <option value="1">Troca</option>
+                <option value="2">Doação</option>
               </select>
             </div>
           </div>
