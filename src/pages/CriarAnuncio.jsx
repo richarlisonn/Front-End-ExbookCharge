@@ -1,16 +1,21 @@
 import "./styles/CriarAnuncio.css";
-import React, { useState } from "react";
+import { useState, useTransition } from "react";
 import Logo from "../assets/images/icon.png";
 import { FaBars, FaUser, FaSignOutAlt, FaImage } from "react-icons/fa";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 function CriarAnuncio() {
+  const [isPending, startTransition] = useTransition();
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [image, setImage] = useState(null);
   const [form, setForm] = useState({
     title: "",
     autor: "",
     descricao: "",
-    status: "danificado",
+    status: 1,
+    type: 1,
   });
   const [anuncioCriado, setAnuncioCriado] = useState(null);
   const [alert, setAlert] = useState({ open: false, message: "" });
@@ -29,7 +34,82 @@ function CriarAnuncio() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  function handleCreateAnnounce() {
+    startTransition(async () => {
+      const accessToken = localStorage.getItem("accessToken");
+      const csrfToken = localStorage.getItem("csrf-token");
+
+      if (!accessToken || !csrfToken) {
+        setAlert({ open: true, message: "❌ Ocorreu um erro com seu login, refaça o login para criar um anúncio. 1" });
+        return;
+      };
+
+      const decodedToken = jwtDecode(accessToken);
+
+      if (!decodedToken || !decodedToken.user_id) {
+        setAlert({ open: true, message: "❌ Ocorreu um erro com seu login, refaça o login para criar um anúncio. 2" });
+        return;
+      }
+
+      const formData = new FormData();
+
+      formData.append("title", form.title);
+      formData.append("description", form.descricao);
+      formData.append("type", form.type);
+      formData.append("user", decodedToken.user_id);
+      formData.append("author_full_name", form.autor);
+      formData.append("conservation_status", form.status);
+      formData.append("file", image);
+      
+      console.log(form);
+      console.log(formData);
+      
+      axios.post(import.meta.env.VITE_BASE_URL + "announces/",
+        formData,
+        {
+          headers: {
+            "X-CSRFToken": csrfToken,
+            "Authorization": `Bearer ${accessToken}`
+          }
+        })
+      .then((response) => {
+        if (response.status !== 201) {
+          setForm({ title: "", autor: "", descricao: "", status: 1, type: 1 });
+          setImage(null);
+          setAlert({
+            open: true,
+            message: response.data.message + " ❌ Ocorreu um erro ao criar o anúncio.",
+          });
+          return;
+        };
+        
+        setAnuncioCriado(response.data); 
+        setAlert({ open: true, message: "✅ Anúncio criado com sucesso!" });
+      })
+      .catch((error) => {
+        console.error("Error creating announce:", error);
+        
+        setForm({ title: "", autor: "", descricao: "", status: 1, type: 1 });
+        setImage(null);
+
+        if (error.status === 403) {
+          setAlert({
+            open: true,
+            message: error.message + " ❌ Ocorreu um erro com seu login, refaça o login para criar um anúncio.",
+          });
+          return;
+        };
+
+        setAlert({
+          open: true,
+          message: error.message + " ❌ Ocorreu um erro ao criar o anúncio.",
+        });
+        return;
+      });
+    });
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     if (!form.title || !form.autor || !form.descricao || !image) {
@@ -40,38 +120,7 @@ function CriarAnuncio() {
       return;
     }
 
-    try {
-      const formData = new FormData();
-      formData.append("title", form.title);
-      formData.append("autor", form.autor);
-      formData.append("descricao", form.descricao);
-      formData.append("status", form.status);
-      formData.append("image", image);
-
-      // chamada à API
-      const response = await fetch("http://localhost:3000/anuncios", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error("Erro ao criar anúncio");
-      }
-
-      const data = await response.json();
-
-      setAnuncioCriado(data); 
-      setAlert({ open: true, message: "✅ Anúncio criado com sucesso!" });
-
-    
-      setForm({ title: "", autor: "", descricao: "", status: "bom" });
-      setImage(null);
-    } catch (error) {
-      setAlert({
-        open: true,
-        message: "❌ Ocorreu um erro ao criar o anúncio.",
-      });
-    }
+    handleCreateAnnounce();
   };
 
   const closeAlert = () => {
@@ -162,23 +211,23 @@ function CriarAnuncio() {
                 value={form.status}
                 onChange={handleChange}
               >
-                <option value="1">Danificado</option>
-                <option value="2">Usado</option>
-                <option value="3">Bom</option>
-                <option value="4">Ótimo</option>
-                <option value="5">Novo</option>
+                <option value={1}>Danificado</option>
+                <option value={2}>Usado</option>
+                <option value={3}>Bom</option>
+                <option value={4}>Ótimo</option>
+                <option value={5}>Novo</option>
               </select>
             </div>
 
              <div className="status-field">
             
               <select
-                name="status"
-                value={form.status}
+                name="type"
+                value={form.type}
                 onChange={handleChange}
               >
-                <option value="1">Troca</option>
-                <option value="2">Doação</option>
+                <option value={1}>Troca</option>
+                <option value={2}>Doação</option>
               </select>
             </div>
           </div>
