@@ -14,7 +14,8 @@ function CriarAnuncio() {
     title: "",
     autor: "",
     descricao: "",
-    status: "danificado",
+    status: 1,
+    type: 1,
   });
   const [anuncioCriado, setAnuncioCriado] = useState(null);
   const [alert, setAlert] = useState({ open: false, message: "" });
@@ -59,7 +60,10 @@ function CriarAnuncio() {
       formData.append("author_full_name", form.autor);
       formData.append("conservation_status", form.status);
       formData.append("file", image);
-    
+      
+      console.log(form);
+      console.log(formData);
+      
       axios.post(import.meta.env.VITE_BASE_URL + "announces/",
         formData,
         {
@@ -70,7 +74,7 @@ function CriarAnuncio() {
         })
       .then((response) => {
         if (response.status !== 201) {
-          setForm({ title: "", autor: "", descricao: "", status: "bom" });
+          setForm({ title: "", autor: "", descricao: "", status: 1, type: 1 });
           setImage(null);
           setAlert({
             open: true,
@@ -85,7 +89,7 @@ function CriarAnuncio() {
       .catch((error) => {
         console.error("Error creating announce:", error);
         
-        setForm({ title: "", autor: "", descricao: "", status: "bom" });
+        setForm({ title: "", autor: "", descricao: "", status: 1, type: 1 });
         setImage(null);
 
         if (error.status === 403) {
@@ -207,23 +211,23 @@ function CriarAnuncio() {
                 value={form.status}
                 onChange={handleChange}
               >
-                <option value="1">Danificado</option>
-                <option value="2">Usado</option>
-                <option value="3">Bom</option>
-                <option value="4">Ótimo</option>
-                <option value="5">Novo</option>
+                <option value={1}>Danificado</option>
+                <option value={2}>Usado</option>
+                <option value={3}>Bom</option>
+                <option value={4}>Ótimo</option>
+                <option value={5}>Novo</option>
               </select>
             </div>
 
              <div className="status-field">
             
               <select
-                name="status"
-                value={form.status}
+                name="type"
+                value={form.type}
                 onChange={handleChange}
               >
-                <option value="1">Troca</option>
-                <option value="2">Doação</option>
+                <option value={1}>Troca</option>
+                <option value={2}>Doação</option>
               </select>
             </div>
           </div>
