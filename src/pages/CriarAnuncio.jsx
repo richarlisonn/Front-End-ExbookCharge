@@ -92,11 +92,13 @@ function CriarAnuncio() {
         setForm({ title: "", autor: "", descricao: "", status: 1, type: 1 });
         setImage(null);
 
-        if (error.status === 403) {
-          setAlert({
-            open: true,
-            message: error.message + " ❌ Ocorreu um erro com seu login, refaça o login para criar um anúncio.",
-          });
+        if (error.response.status === 403) {
+          const reloginResponse = Authentication.reloginRefreshToken();
+
+          if (reloginResponse.status) {
+            setError(reloginResponse);
+          };
+          
           return;
         };
 

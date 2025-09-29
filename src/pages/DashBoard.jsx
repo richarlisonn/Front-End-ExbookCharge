@@ -3,6 +3,7 @@ import Logo from "../assets/images/icon.png";
 import { FaBars, FaUser, FaSearch, FaSignOutAlt } from "react-icons/fa";
 import "./styles/DashBoard.css"; 
 import axios from "axios";
+import { Authentication } from "../utils/Authentication";
 
 function DashBoard() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -46,7 +47,12 @@ function DashBoard() {
         console.error('Error fetching announces:', error);
 
         if (error.response.status === 403) {
-          setError('❌ Erro de autenticação, por favor refaça o login.');
+          const reloginResponse = Authentication.reloginRefreshToken();
+
+          if (reloginResponse.status) {
+            setError(reloginResponse);
+          };
+
           return;
         };
 
