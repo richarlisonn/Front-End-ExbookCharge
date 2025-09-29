@@ -31,7 +31,7 @@ function LoginPage() {
     })
     .catch((error) => {
       console.log(error);
-      setErrors({server: "Erro em requisitar CSRF token para o servidor", details: error});
+      setErrors({message: "Erro em requisitar CSRF token para o servidor", details: error});
       return;
     });
 
@@ -54,18 +54,24 @@ function LoginPage() {
       const refreshToken = localStorage.getItem("refreshToken");
 
       if (!accessToken) {
-        setErrors({server: "Erro em salvar o token de acesso ou de atualização"})
+        setErrors({message: "Erro em salvar o token de acesso ou de atualização"})
       };
       
       if (!refreshToken) {
-        setErrors({server: "Erro em salvar o token de acesso ou de atualização"})
+        setErrors({message: "Erro em salvar o token de acesso ou de atualização"})
       };
       
       navigate("/dashboard");
     })
     .catch((error) => {
       console.log(error);
-      setErrors({server: "Erro em requisitar CSRF token para o servidor", details: error});
+      
+      if (error.status === 401) {
+        setErrors({message: "Email e/ou senha estão incorretos!"});
+        return;
+      };
+      
+      setErrors({message: "Erro ao fazer login!", details: error});
       return;
     });
   };
