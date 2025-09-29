@@ -59,7 +59,7 @@ function CriarAnuncio() {
       formData.append("user", decodedToken.user_id);
       formData.append("author_full_name", form.autor);
       formData.append("conservation_status", form.status);
-      formData.append("file", image);
+      formData.append("images", image);
       
       console.log(form);
       console.log(formData);
