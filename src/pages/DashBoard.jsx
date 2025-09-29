@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useTransition } from "react";
 import Logo from "../assets/images/icon.png"; 
 import { FaBars, FaUser, FaSearch, FaSignOutAlt } from "react-icons/fa";
 import "./styles/DashBoard.css"; 
+import axios from "axios";
 
 function DashBoard() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const [announces, setAnnounces] = useState();
+  const [error, setError] = useState();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -14,12 +18,46 @@ function DashBoard() {
     setIsMenuOpen(false);
   };
 
-  const annouces = [
-    { title: "Dom Casmurro", autor: "Machado de Assis", link: "/dom-casmurro" },
-    { title: "O Senhor dos Anéis", autor: "J.R.R. Tolkien", link: "/senhor-dos-aneis" },
-    { title: "1984", autor: "George Orwell", link: "/1984" },
-    { title: "Harry Potter", autor: "J.K. Rowling", link: "/harry-potter" },
-  ];
+  // setAnnounces([
+  //   { title: "Dom Casmurro", autor: "Machado de Assis", link: "/dom-casmurro" },
+  //   { title: "O Senhor dos Anéis", autor: "J.R.R. Tolkien", link: "/senhor-dos-aneis" },
+  //   { title: "1984", autor: "George Orwell", link: "/1984" },
+  //   { title: "Harry Potter", autor: "J.K. Rowling", link: "/harry-potter" },
+  // ]);
+  
+  const handleGetAnnonces = () => {
+    startTransition(() => {
+      const accessToken = localStorage.getItem('accessToken');  
+      const csrfToken =  localStorage.getItem("csrf-token");
+
+      axios.get(import.meta.env.VITE_BASE_URL + 'announces/', {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'X-CSRFToken': csrfToken
+        }
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          console.log(response);
+          setAnnounces(response.data);
+        };
+      })
+      .catch((error) => {
+        console.error('Error fetching announces:', error);
+
+        if (error.response.status === 403) {
+          setError('❌ Erro de autenticação, por favor refaça o login.');
+          return;
+        };
+
+        setError('Erro ao buscar anúncios: ' + JSON.stringify(error));
+      });
+    });
+  };
+
+  useEffect(() => {
+    handleGetAnnonces();
+  }, []);
 
   return (
     <div className="div_main">
@@ -67,15 +105,14 @@ function DashBoard() {
 
       
       <div className="ads-container">
-        {annouces.map((livro, index) => (
-          <a key={index} href={livro.link} className="ad-card">
-            <div className="ad-image"></div>
+        {announces ? announces.map((livro) => (
+          <a key={livro.id} href={"/" + livro.title} className="ad-card">
+            <div className="ad-image"><img src={livro.images ? import.meta.env.VITE_BASE_URL_IMG + livro.images.find((img) => img.is_cover)?.image : ''} /></div>
             <div className="ad-info">
               <h3>{livro.title}</h3>
-              <p>{livro.autor}</p>
             </div>
           </a>
-        ))}
+        )) : <p>{error ? error : 'Carregando anúncios...'}</p>}
       </div>
     </div>
   );
