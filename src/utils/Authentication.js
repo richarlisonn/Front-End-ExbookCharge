@@ -1,4 +1,4 @@
-const { default: axios } = require("axios");
+import axios from "axios";
 
 export class Authentication {
     static reloginRefreshToken() {
@@ -7,6 +7,10 @@ export class Authentication {
 
         if (!refresh) {
             return {status: "error", message: "Refresh token não encontrado para relogin"};
+        };
+
+        if (!csrf) {
+            return {status: "error", message: "CSRF token não encontrado para relogin"};
         };
         
         axios.post(import.meta.env.VITE_API_URL + "authentication/refresh/",
