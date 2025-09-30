@@ -4,6 +4,7 @@ import Logo from "../assets/images/icon.png";
 import { FaBars, FaUser, FaSignOutAlt, FaImage } from "react-icons/fa";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import { Authentication } from "../utils/Authentication";
 
 function CriarAnuncio() {
   const [isPending, startTransition] = useTransition();
@@ -26,7 +27,7 @@ function CriarAnuncio() {
 
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
-      setImage(e.target.files[0]); 
+      setImage(e.target.files[0]);
     }
   };
 
@@ -40,14 +41,22 @@ function CriarAnuncio() {
       const csrfToken = localStorage.getItem("csrf-token");
 
       if (!accessToken || !csrfToken) {
-        setAlert({ open: true, message: "❌ Ocorreu um erro com seu login, refaça o login para criar um anúncio. 1" });
+        setAlert({
+          open: true,
+          message:
+            "❌ Ocorreu um erro com seu login, refaça o login para criar um anúncio. 1",
+        });
         return;
-      };
+      }
 
       const decodedToken = jwtDecode(accessToken);
 
       if (!decodedToken || !decodedToken.user_id) {
-        setAlert({ open: true, message: "❌ Ocorreu um erro com seu login, refaça o login para criar um anúncio. 2" });
+        setAlert({
+          open: true,
+          message:
+            "❌ Ocorreu um erro com seu login, refaça o login para criar um anúncio. 2",
+        });
         return;
       }
 
@@ -60,56 +69,63 @@ function CriarAnuncio() {
       formData.append("author_full_name", form.autor);
       formData.append("conservation_status", form.status);
       formData.append("images", image);
-      
+
       console.log(form);
       console.log(formData);
-      
-      axios.post(import.meta.env.VITE_BASE_URL + "announces/",
-        formData,
-        {
+
+      axios
+        .post(import.meta.env.VITE_BASE_URL + "announces/", formData, {
           headers: {
             "X-CSRFToken": csrfToken,
-            "Authorization": `Bearer ${accessToken}`
-          }
+            Authorization: `Bearer ${accessToken}`,
+          },
         })
-      .then((response) => {
-        if (response.status !== 201) {
+        .then((response) => {
+          if (response.status !== 201) {
+            setForm({
+              title: "",
+              autor: "",
+              descricao: "",
+              status: 1,
+              type: 1,
+            });
+            setImage(null);
+            setAlert({
+              open: true,
+              message:
+                response.data.message +
+                " ❌ Ocorreu um erro ao criar o anúncio.",
+            });
+            return;
+          }
+
+          setAnuncioCriado(response.data);
+          setAlert({ open: true, message: "✅ Anúncio criado com sucesso!" });
+        })
+        .catch((error) => {
+          console.error("Error creating announce:", error);
+
           setForm({ title: "", autor: "", descricao: "", status: 1, type: 1 });
           setImage(null);
+
+          if (error.response.status === 403) {
+            const reloginResponse = Authentication.reloginRefreshToken();
+
+            if (reloginResponse.status === "error") {
+              setError(reloginResponse);
+            }
+
+            return;
+          }
+
           setAlert({
             open: true,
-            message: response.data.message + " ❌ Ocorreu um erro ao criar o anúncio.",
+            message: error.message + " ❌ Ocorreu um erro ao criar o anúncio.",
           });
           return;
-        };
-        
-        setAnuncioCriado(response.data); 
-        setAlert({ open: true, message: "✅ Anúncio criado com sucesso!" });
-      })
-      .catch((error) => {
-        console.error("Error creating announce:", error);
-        
-        setForm({ title: "", autor: "", descricao: "", status: 1, type: 1 });
-        setImage(null);
-
-        if (error.response.status === 403) {
-          const reloginResponse = Authentication.reloginRefreshToken();
-
-          if (reloginResponse.status) {
-            setError(reloginResponse);
-          };
-          
-          return;
-        };
-
-        setAlert({
-          open: true,
-          message: error.message + " ❌ Ocorreu um erro ao criar o anúncio.",
         });
-        return;
-      });
     });
-  };
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -154,9 +170,17 @@ function CriarAnuncio() {
         </div>
         <hr />
         <ul className="menu-list">
-          <li><a href="/dashboard">Início</a></li>
-          <li><a href="/CriarAnuncio">Criar Anúncio</a></li>
-          <li><a href="/"><FaSignOutAlt /> Sair</a></li>
+          <li>
+            <a href="/dashboard">Início</a>
+          </li>
+          <li>
+            <a href="/CriarAnuncio">Criar Anúncio</a>
+          </li>
+          <li>
+            <a href="/">
+              <FaSignOutAlt /> Sair
+            </a>
+          </li>
         </ul>
       </div>
 
@@ -208,11 +232,7 @@ function CriarAnuncio() {
           <div className="status-container">
             <div className="status-field">
               <label>Status</label>
-              <select
-                name="status"
-                value={form.status}
-                onChange={handleChange}
-              >
+              <select name="status" value={form.status} onChange={handleChange}>
                 <option value={1}>Danificado</option>
                 <option value={2}>Usado</option>
                 <option value={3}>Bom</option>
@@ -221,13 +241,8 @@ function CriarAnuncio() {
               </select>
             </div>
 
-             <div className="status-field">
-            
-              <select
-                name="type"
-                value={form.type}
-                onChange={handleChange}
-              >
+            <div className="status-field">
+              <select name="type" value={form.type} onChange={handleChange}>
                 <option value={1}>Troca</option>
                 <option value={2}>Doação</option>
               </select>
@@ -262,9 +277,15 @@ function CriarAnuncio() {
           <h3>📌 Último Anúncio Criado</h3>
           <img src={anuncioCriado.imageUrl} alt={anuncioCriado.title} />
           <h4>{anuncioCriado.title}</h4>
-          <p><b>Autor:</b> {anuncioCriado.autor}</p>
-          <p><b>Status:</b> {anuncioCriado.status}</p>
-          <p><b>Descrição:</b> {anuncioCriado.descricao}</p>
+          <p>
+            <b>Autor:</b> {anuncioCriado.autor}
+          </p>
+          <p>
+            <b>Status:</b> {anuncioCriado.status}
+          </p>
+          <p>
+            <b>Descrição:</b> {anuncioCriado.descricao}
+          </p>
         </div>
       )}
     </div>

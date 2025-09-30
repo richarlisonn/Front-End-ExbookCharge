@@ -49,7 +49,7 @@ function DashBoard() {
         if (error.response.status === 403) {
           const reloginResponse = Authentication.reloginRefreshToken();
 
-          if (reloginResponse.status) {
+          if (reloginResponse.status === "error") {
             setError(reloginResponse);
           };
 
