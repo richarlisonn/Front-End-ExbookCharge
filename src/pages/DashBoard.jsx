@@ -41,7 +41,7 @@ function DashBoard() {
         .then((response) => {
           if (response.status === 200) {
             console.log(response);
-            setAnnounces(response.data);
+            setAnnounces(response.data.announces);
           }
         })
         .catch((error) => {
