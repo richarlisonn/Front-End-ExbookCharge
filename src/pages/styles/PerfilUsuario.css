@@ -80,3 +80,20 @@
 .side-menu.open {
   left: 0; 
 }
+
+.ad-info h3 {
+  font-size: 18px;
+  color: #0f3d3e;
+  margin: 0;
+}
+
+.ad-info p {
+  font-size: 14px;
+  color: #666;
+}
+
+.ad-info a {
+  margin-right: 10px;
+  color: #0f3d3e;
+  font-size: 18px;
+}
