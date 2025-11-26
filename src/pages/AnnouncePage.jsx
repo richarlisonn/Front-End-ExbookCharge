@@ -53,25 +53,30 @@ export default function AnnouncePage() {
                 setAnnounceView(response.data.announce);
             })
             .catch(async (error) => {
-                console.error("Error fetching announce:", error);
-                if (error.response.status === 403) {
-                    await Authentication.reloginRefreshToken()
-                    .then(() => {
-                        window.location.reload();
+                      console.error("Error fetching user data:", error);
+                      if (error.response.status === 403) {
+                        await Authentication.reloginRefreshToken()
+                          .then((response) => {
+                            
+                            if (response.status === "error") {
+                              alert("Login expirado, por favor faça login novamente.");
+                              navigate("/login");
+                              return;
+                            };
+                            window.location.reload();
+                            return;
+                          })
+                          .catch(() => {
+                            alert("Login expirado, por favor faça login novamente.");
+                            navigate("/login");
+                            return;
+                          });
+            
                         return;
-                    }).catch(() => {
-                        alert("Login expirado, por favor faça login novamente.");
-                        navigate("/login");
-                        return;
+                      };
                     });
-                    
-                    return;
-                };
-                
-                console.error("Error fetching announce:", error)});
-
-        })},
-    [id])
+                });
+            },[id]);
     return (
             isPending || !announce ? <p>Carregando anúncio...</p> : 
             <div className="announce-page">
@@ -82,7 +87,7 @@ export default function AnnouncePage() {
                         <img src={Logo} alt="Logo Exbook Change" className="logo_DashBoard" />
                         </a>
                         <div className="right-icons">
-                        <a href="/perfil">
+                        <a href="/profile">
                             <FaUser className="icon" />
                         </a>
                         </div>
@@ -103,7 +108,7 @@ export default function AnnouncePage() {
                             <a href="/dashboard">Início</a>
                           </li>
                           <li>
-                            <a href="/CriarAnuncio">Criar Anúncio</a>
+                            <a href="/criarAnuncio">Criar Anúncio</a>
                           </li>
                           <li>
                             <a href="/">

@@ -4,12 +4,15 @@ import { FaBars, FaUser, FaSearch, FaSignOutAlt } from "react-icons/fa";
 import "./styles/DashBoard.css";
 import axios from "axios";
 import { Authentication } from "../utils/Authentication";
+import { useNavigate } from "react-router-dom";
 
 function DashBoard() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [announces, setAnnounces] = useState();
   const [error, setError] = useState();
+
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -44,20 +47,27 @@ function DashBoard() {
             setAnnounces(response.data.announces);
           }
         })
-        .catch((error) => {
-          console.error("Error fetching announces:", error);
-
+        .catch(async (error) => {
+          console.error("Error fetching user data:", error);
           if (error.response.status === 403) {
-            const reloginResponse = Authentication.reloginRefreshToken();
+            await Authentication.reloginRefreshToken()
+              .then((response) => {
+                if (response.status === "error") {
+                  alert("Login expirado, por favor faça login novamente.");
+                  navigate("/login");
+                  return;
+                }
+                window.location.reload();
+                return;
+              })
+              .catch(() => {
+                alert("Login expirado, por favor faça login novamente.");
+                navigate("/login");
+                return;
+              });
 
-            if (reloginResponse.status === "error") {
-              setError(reloginResponse);
-            }
-
-            window.location.reload();
             return;
-          }
-
+          };
           setError("Erro ao buscar anúncios: " + JSON.stringify(error));
         });
     });
@@ -75,7 +85,7 @@ function DashBoard() {
           <img src={Logo} alt="Logo Exbook Change" className="logo_DashBoard" />
         </a>
         <div className="right-icons">
-          <a href="/perfil">
+          <a href="/profile">
             <FaUser className="icon" />
           </a>
         </div>
@@ -96,7 +106,7 @@ function DashBoard() {
             <a href="/dashboard">Início</a>
           </li>
           <li>
-            <a href="/CriarAnuncio">Criar Anúncio</a>
+            <a href="/criarAnuncio">Criar Anúncio</a>
           </li>
           <li>
             <a href="/">
@@ -120,7 +130,11 @@ function DashBoard() {
       <div className="ads-container">
         {Array.isArray(announces) && announces.length > 0 ? (
           announces.map((livro) => (
-            <a key={livro.id} href={"/dashboard/" + livro.id} className="ad-card">
+            <a
+              key={livro.id}
+              href={"/dashboard/" + livro.id}
+              className="ad-card"
+            >
               <div className="ad-image">
                 <img
                   src={
