@@ -54,6 +54,7 @@ function DashBoard() {
               setError(reloginResponse);
             }
 
+            window.location.reload();
             return;
           }
 
@@ -119,7 +120,7 @@ function DashBoard() {
       <div className="ads-container">
         {Array.isArray(announces) && announces.length > 0 ? (
           announces.map((livro) => (
-            <a key={livro.id} href={"/" + livro.title} className="ad-card">
+            <a key={livro.id} href={"/dashboard/" + livro.id} className="ad-card">
               <div className="ad-image">
                 <img
                   src={
