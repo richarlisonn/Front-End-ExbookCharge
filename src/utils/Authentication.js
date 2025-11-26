@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export class Authentication {
-    static reloginRefreshToken() {
+    static async reloginRefreshToken() {
         const refresh = localStorage.getItem("refreshToken");
         const csrf = localStorage.getItem("csrf-token");
 
@@ -13,14 +13,12 @@ export class Authentication {
             return {status: "error", message: "CSRF token não encontrado para relogin"};
         };
         
-        axios.post(import.meta.env.VITE_API_URL + "authentication/refresh/",
+        await axios.post(import.meta.env.VITE_API_URL + "authentication/refresh/",
+        {refresh: refresh},
         {
             headers: {
                 "X-CSRFToken": csrf,
             }
-        },
-        {
-            refresh: refresh,
         })
         .then((response) => {
             localStorage.setItem("refreshToken", response.data.refresh);
