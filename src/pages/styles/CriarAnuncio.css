@@ -118,6 +118,14 @@ body {
   text-align: center;
 }
 
+.image-current-preview {
+  text-align: start;
+}
+.image-current-preview label {
+  font-size: 13px;
+  font-weight: bold;
+}
+
 .upload-placeholder {
   background: #143c2c;
   color: white;
