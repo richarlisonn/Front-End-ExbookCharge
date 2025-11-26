@@ -153,7 +153,7 @@ function CriarAnuncio() {
           <img src={Logo} alt="Logo Exbook Change" className="logo_DashBoard" />
         </a>
         <div className="right-icons">
-          <a href="/perfil">
+          <a href="/profile">
             <FaUser className="icon" />
           </a>
         </div>
@@ -174,7 +174,7 @@ function CriarAnuncio() {
             <a href="/dashboard">Início</a>
           </li>
           <li>
-            <a href="/CriarAnuncio">Criar Anúncio</a>
+            <a href="/criarAnuncio">Criar Anúncio</a>
           </li>
           <li>
             <a href="/">
