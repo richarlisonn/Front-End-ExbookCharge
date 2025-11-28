@@ -11,8 +11,9 @@ import "./styles/PerfilUsuario.css";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { Authentication } from "../utils/Authentication";
-import { useNavigate } from "react-router-dom";
+import { href, useNavigate } from "react-router-dom";
 import { CgArrowsExchangeAlt } from "react-icons/cg";
+import { IoTrashOutline } from "react-icons/io5";
 
 function PerfilUsuario() {
   const [isPending, startTransition] = useTransition();
@@ -23,6 +24,16 @@ function PerfilUsuario() {
   const [data, setData] = useState({});
   const [profile, setProfile] = useState({});
 
+  const [announceId, setAnnounceId] = useState(null);
+  const [alertPersonalized, setAlertPersonalized] = useState({
+    open: false,
+    message: "",
+  });
+
+  const closeAlert = () => {
+    setAlertPersonalized({ open: false, message: "" });
+    setAnnounceId(null);
+  };
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -30,6 +41,46 @@ function PerfilUsuario() {
 
   const fecharMenu = () => {
     setIsMenuOpen(false);
+  };
+
+  const handleDeleteAnnounce = () => {
+    startTransition(async () => {
+      const accessToken = localStorage.getItem("accessToken");
+      const csrfToken = localStorage.getItem("csrf-token");
+
+      await axios
+        .delete(import.meta.env.VITE_BASE_URL + "announces/?announce_id=" + announceId, {
+          headers: {
+            "X-CSRFToken": csrfToken,
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+        .then((response) => {
+          console.log(response);
+          alert("✅ " + response.data.message);
+          window.location.reload();
+          return;
+        })
+        .catch(async (error) => {
+          console.error("Error fetching user data:", error);
+          if (error.response.status === 403) {
+            await Authentication.reloginRefreshToken()
+              .then((response) => {
+                //window.location.reload();
+                return;
+              })
+              .catch(() => {
+                alert("Login expirado, por favor faça login novamente.");
+                navigate("/login");
+                return;
+              });
+
+            return;
+          }
+          alert("❌ " + error.response.data.message, JSON.stringify(error));
+          return;
+        });
+    });
   };
 
   useEffect(() => {
@@ -42,17 +93,12 @@ function PerfilUsuario() {
       await setUserId(id);
 
       await axios
-        .get(
-          `${import.meta.env.VITE_BASE_URL}profile/?user_id=${
-            id
-          }`,
-          {
-            headers: {
-              "X-CSRFToken": csrfToken,
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        )
+        .get(`${import.meta.env.VITE_BASE_URL}profile/?user_id=${id}`, {
+          headers: {
+            "X-CSRFToken": csrfToken,
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
         .then((response) => {
           console.log(response);
           setData(response.data);
@@ -63,11 +109,6 @@ function PerfilUsuario() {
           if (error.response.status === 403) {
             await Authentication.reloginRefreshToken()
               .then((response) => {
-                if (response.status === "error") {
-                  alert("Login expirado, por favor faça login novamente.");
-                  navigate("/login");
-                  return;
-                }
                 window.location.reload();
                 return;
               })
@@ -117,7 +158,7 @@ function PerfilUsuario() {
             <a href="/criarAnuncio">Criar Anúncio</a>
           </li>
           <li>
-            <a href="/dashboard">
+            <a href="/">
               <FaSignOutAlt /> Sair
             </a>
           </li>
@@ -129,9 +170,14 @@ function PerfilUsuario() {
       ) : (
         <>
           <section className="perfil">
-            {profile.photo ? <img
-              src={
-                import.meta.env.VITE_BASE_URL_IMG + profile.photo } className="photo"/> : <FaUserCircle className="profile-icon" />}
+            {profile.photo ? (
+              <img
+                src={import.meta.env.VITE_BASE_URL_IMG + profile.photo}
+                className="photo"
+              />
+            ) : (
+              <FaUserCircle className="profile-icon" />
+            )}
             <div className="profile-info">
               {!data.profile ? <h3>Erro ao carregar perfil</h3> : <></>}
               <h3>{profile.nickname}</h3>
@@ -157,33 +203,62 @@ function PerfilUsuario() {
           <div className="ads-container">
             {data.announces ? (
               data.announces.map((livro, index) => (
-                <a
-                  key={livro.id}
-                  href={"/dashboard/" + livro.id}
-                  className="ad-card"
-                >
-                  <div className="ad-image">
-                    <img
-                      src={
-                        livro.images
-                          ? import.meta.env.VITE_BASE_URL_IMG +
-                            livro.images.find((img) => img.is_cover)?.image
-                          : ""
-                      }
-                    />
-                  </div>
+                <div className="ad-card" key={index}>
+                  <a key={livro.id} href={"/dashboard/" + livro.id}>
+                    <div className="ad-image">
+                      <img
+                        src={
+                          livro.images
+                            ? import.meta.env.VITE_BASE_URL_IMG +
+                              livro.images.find((img) => img.is_cover)?.image
+                            : ""
+                        }
+                      />
+                    </div>
+                  </a>
                   <div className="ad-info">
                     <h3>{livro.title}</h3>
-                    <a href={"/dashboard/exchangedonation/" + livro.id}><CgArrowsExchangeAlt /></a>
-                    <a href={"/dashboard/editbook/" + livro.id}><FaEdit /></a>
+                    <a href={"/dashboard/exchangedonation/" + livro.id}>
+                      <CgArrowsExchangeAlt />
+                    </a>
+                    <a href={"/dashboard/editbook/" + livro.id}>
+                      <FaEdit />
+                    </a>
+                    <a
+                      onClick={() => {
+                        setAnnounceId(livro.id);
+                        setAlertPersonalized({
+                          open: true,
+                          message: "Excluir anúncio " + livro.title,
+                        });
+                      }}
+                    >
+                      <IoTrashOutline />
+                    </a>
                   </div>
-                </a>
+                </div>
               ))
             ) : (
               <p>Sem anúncios disponíveis</p>
             )}
           </div>
         </>
+      )}
+      {alertPersonalized.open && (
+        <div className="custom-alert">
+          <div className="custom-alert-box">
+            <p>{alertPersonalized.message}</p>
+            <button
+              onClick={() => {
+                handleDeleteAnnounce();
+                closeAlert();
+              }}
+            >
+              OK
+            </button>
+            <button onClick={closeAlert}>Cancelar</button>
+          </div>
+        </div>
       )}
     </div>
   );
