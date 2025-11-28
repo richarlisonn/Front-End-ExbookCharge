@@ -199,7 +199,6 @@ function RegisterPage() {
       {successMessage && <p className="success">{successMessage.message}</p>}
       {errors.server && <p className="errors-server">{errors.server}{console.log({message: errors.server, details: errors.details})}</p>}
 
-      <Link to="/ajuda" className="link-ajuda">Precisando de Ajuda?</Link>
     </div>
   );
 }
