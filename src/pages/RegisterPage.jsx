@@ -108,13 +108,16 @@ function RegisterPage() {
     }
 
     setErrors(newErrors);
+    let phoneNumber = form.telefone.trim();
+    phoneNumber = phoneNumber.replace("+", '');
+    
     
     if (Object.keys(newErrors).length === 0) {
       const validate = SignUpValidator.validate({
             full_name: form.nome_completo,
             date_birth: form.nascimento,  
             email: form.email,
-            phone: form.telefone,
+            phone: phoneNumber,
             password: form.senha
           });
   
