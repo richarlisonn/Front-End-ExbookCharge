@@ -9,8 +9,10 @@ import LoginPage from './pages/LoginPage.jsx';
 import DashBoard from './pages/DashBoard.jsx';
 import PerfilUsuario from './pages/PerfilUsuario.jsx';  
 import CriarAnuncio from './pages/CriarAnuncio.jsx';
-import EditarPerfil from './pages/EditarPerfil.jsx';
+import UpdateProfile from './pages/UpdateProfile.jsx';
 import AnnouncePage from './pages/AnnouncePage.jsx';
+import UpdateAnnounce from './pages/UpdateAnnounce.jsx';
+import ExchangeDonationPage from './pages/ExchangeDonationPage.jsx';
 
 const router = createBrowserRouter([
   { path: '/', element: <App /> },
@@ -18,9 +20,11 @@ const router = createBrowserRouter([
   { path: '/login', element: <LoginPage /> },
   { path: '/dashboard', element: <DashBoard /> },
   { path: '/dashboard/:id', element: <AnnouncePage /> },
-  { path: '/perfil', element: <PerfilUsuario /> },
+  { path: '/dashboard/editbook/:id', element: <UpdateAnnounce /> },
+  { path: '/dashboard/exchangedonation/:id', element: <ExchangeDonationPage /> },
+  { path: '/profile', element: <PerfilUsuario /> },
   { path: '/criaranuncio', element: <CriarAnuncio /> },
-  { path: '/editarperfil', element: <EditarPerfil /> },
+  { path: '/updateprofile/:id', element: <UpdateProfile /> },
 
 
 ]);
