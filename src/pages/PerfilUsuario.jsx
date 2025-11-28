@@ -1,3 +1,5 @@
+import "./styles/PerfilUsuario.css";
+
 import React, { useEffect, useState, useTransition } from "react";
 import Logo from "../assets/images/icon.png";
 import {
@@ -7,7 +9,6 @@ import {
   FaUser,
   FaSignOutAlt,
 } from "react-icons/fa";
-import "./styles/PerfilUsuario.css";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { Authentication } from "../utils/Authentication";
@@ -31,7 +32,7 @@ function PerfilUsuario() {
   });
 
   const closeAlert = () => {
-    setAlertPersonalized({ open: false, message: "" });
+    setAlertPersonalized({ open: false, message: "", action: () => {} });
     setAnnounceId(null);
   };
 
@@ -41,6 +42,46 @@ function PerfilUsuario() {
 
   const fecharMenu = () => {
     setIsMenuOpen(false);
+  };
+
+  const handleDeleteUser = () => {
+    startTransition(async () => {
+      const accessToken = localStorage.getItem("accessToken");
+      const csrfToken = localStorage.getItem("csrf-token");
+
+      await axios
+        .delete(import.meta.env.VITE_BASE_URL + "users/?user_id=" + userId, {
+          headers: {
+            "X-CSRFToken": csrfToken,
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+        .then((response) => {
+          console.log(response);
+          alert("✅ " + response.data.message);
+          navigate("/");
+          return;
+        })
+        .catch(async (error) => {
+          console.error("Error fetching user data:", error);
+          if (error.response.status === 403) {
+            await Authentication.reloginRefreshToken()
+              .then((response) => {
+                window.location.reload();
+                return;
+              })
+              .catch(() => {
+                alert("Login expirado, por favor faça login novamente.");
+                navigate("/login");
+                return;
+              });
+
+            return;
+          }
+          alert("❌ " + error.response.data.message, JSON.stringify(error));
+          return;
+        });
+    });
   };
 
   const handleDeleteAnnounce = () => {
@@ -66,7 +107,7 @@ function PerfilUsuario() {
           if (error.response.status === 403) {
             await Authentication.reloginRefreshToken()
               .then((response) => {
-                //window.location.reload();
+                window.location.reload();
                 return;
               })
               .catch(() => {
@@ -183,9 +224,19 @@ function PerfilUsuario() {
               <h3>{profile.nickname}</h3>
               <p>{profile.description}</p>
             </div>
+            <div className="bt-profile-info">
             <a href={`/updateprofile/${userId}`}>
               <FaEdit className="edit-icon" />
             </a>
+            <a onClick={() => {
+              setAlertPersonalized({
+                open: true,
+                message: "Excluir Usuário " + profile.nickname,
+                action: handleDeleteUser
+              });
+            }}><IoTrashOutline className="edit-icon" />
+            </a>
+            </div>
           </section>
 
           <hr className="divider" />
@@ -230,6 +281,7 @@ function PerfilUsuario() {
                         setAlertPersonalized({
                           open: true,
                           message: "Excluir anúncio " + livro.title,
+                          action: handleDeleteAnnounce
                         });
                       }}
                     >
@@ -250,7 +302,7 @@ function PerfilUsuario() {
             <p>{alertPersonalized.message}</p>
             <button
               onClick={() => {
-                handleDeleteAnnounce();
+                alertPersonalized.action();
                 closeAlert();
               }}
             >

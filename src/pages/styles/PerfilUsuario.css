@@ -104,3 +104,11 @@
   color: #0f3d3e;
   font-size: 18px;
 }
+
+.bt-profile-info {
+  background-color: aqua;
+  height: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
