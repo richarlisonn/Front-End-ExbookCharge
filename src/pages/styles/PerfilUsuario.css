@@ -8,9 +8,16 @@
   position: relative;
 }
 
-.profile-icon {
+.profile-icon, .photo {
   font-size: 100px;
   margin-right: 10px;
+}
+
+.photo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .profile-info h3 {
